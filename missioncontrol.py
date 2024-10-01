@@ -37,7 +37,7 @@ def get_enabled_services_with_user():
         service_status = subprocess.run(['systemctl', 'cat', service], capture_output=True, text=True)
         if re.search(r'^User=', service_status.stdout, re.MULTILINE):
             services_with_user.append(service)
-    return services_with_user
+    return sorted(services_with_user)
 
 def get_service_status_and_description(service):
     result_status = subprocess.run(['systemctl', 'status', service], capture_output=True, text=True)
@@ -136,7 +136,7 @@ async def update_service_status():
 
 async def send_service_status(channel):
     global status_message
-    services = get_enabled_services_with_user()
+    services = sorted(get_enabled_services_with_user())
     status_messages = []
     overall_status = '🟢'
 
