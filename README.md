@@ -28,8 +28,10 @@ pip install discord.py python-dotenv
 ### Step 1: Create a `.env` file
 Create a `.env` file in the same directory as the bot script. The file should contain the following variables:
 ```bash
-DISCORD_BOT_TOKEN=<your_discord_bot_token>
-DISCORD_CHANNEL_ID=<your_discord_channel_id>
+DISCORD_BOT_TOKEN=
+DISCORD_CHANNEL_ID=
+SERVICE_CHECK_RATE=10
+CHANNEL_PRECEDING_CHARACTER=┏
 ```
 Replace `<your_discord_bot_token>` with the actual token of your Discord bot and `<your_discord_channel_id>` with the ID of the channel where the bot will send status updates.
 
