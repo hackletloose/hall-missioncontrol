@@ -12,6 +12,7 @@ DISCORD_BOT_TOKEN = os.getenv('DISCORD_BOT_TOKEN')
 DISCORD_CHANNEL_ID = int(os.getenv('DISCORD_CHANNEL_ID'))
 SERVICE_CHECK_RATE = int(os.getenv('SERVICE_CHECK_RATE'), 10)
 CHANNEL_PRECEDING_CHARACTER = os.getenv('CHANNEL_PRECEDING_CHARACTER', '')
+SERVICE_USER = os.getenv('SERVICE_USER')
 intents = discord.Intents.default()
 intents.message_content = True
 intents.messages = True
@@ -32,12 +33,14 @@ def get_services_from_systemd():
 def get_enabled_services_with_user():
     services = get_services_from_systemd()
     services_with_user = []
-    
     for service in services:
         service_status = subprocess.run(['systemctl', 'cat', service], capture_output=True, text=True)
-        if re.search(r'^User=', service_status.stdout, re.MULTILINE):
+        if re.search(rf'^User={SERVICE_USER}', service_status.stdout, re.MULTILINE):
             services_with_user.append(service)
+    if not services_with_user:
+        print(f"No services found for user: {SERVICE_USER}")
     return sorted(services_with_user)
+
 
 def get_service_status_and_description(service):
     result_status = subprocess.run(['systemctl', 'status', service], capture_output=True, text=True)
@@ -137,9 +140,11 @@ async def update_service_status():
 async def send_service_status(channel):
     global status_message
     services = sorted(get_enabled_services_with_user())
+    if not services:
+        await channel.send("No services found for the specified user.")
+        return
     status_messages = []
     overall_status = '🟢'
-
     for service in services[:25]:
         status, description = get_service_status_and_description(service)
         emoji = get_status_emoji(status)
