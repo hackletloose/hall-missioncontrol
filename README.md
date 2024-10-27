@@ -23,6 +23,8 @@ You can install the required libraries by running:
 
 ```bash
 pip install discord.py python-dotenv
+sudo locale-gen de_DE.UTF-8
+sudo update-locale
 ```
 ## Configuration
 ### Step 1: Create a `.env` file
